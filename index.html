@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mappa Cognitiva: Il Ciclo dell'Acqua - Guida & Simulatore Didattico</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .tab-btn.active {
+            border-bottom-color: #0284c7;
+            color: #0284c7;
+            background-color: #f0f9ff;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        canvas { touch-action: none; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Header Principale -->
+    <header class="bg-sky-900 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row md:items-center md:justify-between">
+            <div class="flex items-center space-x-3 mb-3 md:mb-0">
+                <div class="p-2.5 bg-sky-700 rounded-xl shadow">
+                    <svg class="w-8 h-8 text-sky-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Mappa Cognitiva: Il Ciclo dell'Acqua</h1>
+                    <p class="text-xs sm:text-sm text-sky-200">Analisi dell'esercizio pedagogico scientifico e simulatore di mappatura concettuale</p>
+                </div>
+            </div>
+
+            <!-- Badge Didattico -->
+            <div class="flex items-center space-x-2 text-xs font-semibold">
+                <span class="bg-sky-800 border border-sky-600 px-3 py-1.5 rounded-full text-sky-100 flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                    Esercitazione Scienze & Pedagogia
+                </span>
+            </div>
+        </div>
+
+        <!-- Pulsanti di Navigazione Principali (Tab Bar) -->
+        <nav class="bg-white border-b border-slate-200 px-2 sm:px-6 shadow-inner overflow-x-auto">
+            <div class="max-w-7xl mx-auto flex space-x-1 sm:space-x-2 py-2 min-w-max">
+                <button onclick="switchTab('descrizione')" id="tab-descrizione" class="tab-btn active inline-flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm text-slate-600 hover:text-sky-600 hover:bg-slate-100 transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    1. Descrizione & Prerequisiti
+                </button>
+                <button onclick="switchTab('obiettivi')" id="tab-obiettivi" class="tab-btn inline-flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm text-slate-600 hover:text-sky-600 hover:bg-slate-100 transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    2. Obiettivi Didattici
+                </button>
+                <button onclick="switchTab('difficolta')" id="tab-difficolta" class="tab-btn inline-flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm text-slate-600 hover:text-sky-600 hover:bg-slate-100 transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                    3. Calibrazione Difficoltà
+                </button>
+                <button onclick="switchTab('tipologie')" id="tab-tipologie" class="tab-btn inline-flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm text-slate-600 hover:text-sky-600 hover:bg-slate-100 transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    4. Varianti & BES
+                </button>
+                <button onclick="switchTab('simulatore')" id="tab-simulatore" class="tab-btn inline-flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm text-sky-700 bg-sky-50 border border-sky-200 hover:bg-sky-100 transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a2 2 0 01-2 2 2 2 0 01-2-2V4zM4 7a2 2 0 114 0v1a2 2 0 01-2 2 2 2 0 01-2-2V7zM18 7a2 2 0 114 0v1a2 2 0 01-2 2 2 2 0 01-2-2V7zM11 17a2 2 0 114 0v1a2 2 0 01-2 2 2 2 0 01-2-2v-1z"></path></svg>
+                    5. Simulatore Interattivo
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Contenuto Principale Dinamico -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+        <!-- TAB 1: Descrizione e Prerequisiti -->
+        <section id="descrizione" class="tab-content active space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-6 sm:p-8 bg-gradient-to-r from-sky-50 to-cyan-50 border-b border-slate-200">
+                    <div class="flex items-center space-x-3">
+                        <span class="p-2.5 bg-sky-600 text-white rounded-xl shadow">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C20.832 18.477 19.247 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                        </span>
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900">1. Descrizione dell'Esercizio: Il Ciclo dell'Acqua</h2>
+                            <p class="text-slate-600 text-sm">Organizzazione e rappresentazione visiva dei processi idrologici</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 sm:p-8 space-y-4 text-slate-700 leading-relaxed">
+                    <p>
+                        Nell'esercizio di costruzione di una <strong>mappa cognitiva sul Ciclo dell'Acqua</strong>, l'alunno deve rappresentare graficamente la trasformazione continua dell'acqua sulla Terra e nell'atmosfera. L'attività richiede di collegare i concetti chiave (es. <em>Evaporazione, Condensazione, Precipitazione, Infiltrazione, Accumulo</em>) mediante frecce orientate ed etichette connettive (es. <em>"scalda", "forma", "ricade come", "penetra nel"</em>).
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+                        <div class="p-4 bg-sky-50 border border-sky-100 rounded-xl">
+                            <span class="text-xs font-bold uppercase tracking-wider text-sky-700 block mb-1">Passaggio 1</span>
+                            <span class="font-bold text-slate-800 block">Evaporazione & Traspirazione</span>
+                            <p class="text-xs text-slate-600 mt-1">L'energia solare scalda l'acqua dei mari trasformandola in vapore acqueo che sale in atmosfera.</p>
+                        </div>
+                        <div class="p-4 bg-cyan-50 border border-cyan-100 rounded-xl">
+                            <span class="text-xs font-bold uppercase tracking-wider text-cyan-700 block mb-1">Passaggio 2</span>
+                            <span class="font-bold text-slate-800 block">Condensazione</span>
+                            <p class="text-xs text-slate-600 mt-1">Il vapore si raffredda in quota e si condensa formando le nuvole.</p>
+                        </div>
+                        <div class="p-4 bg-blue-50 border border-blue-100 rounded-xl">
+                            <span class="text-xs font-bold uppercase tracking-wider text-blue-700 block mb-1">Passaggio 3</span>
+                            <span class="font-bold text-slate-800 block">Precipitazione</span>
+                            <p class="text-xs text-slate-600 mt-1">Le gocce d'acqua diventano pesanti e ricadono a terra come pioggia, neve o grandine.</p>
+                        </div>
+                        <div class="p-4 bg-teal-50 border border-teal-100 rounded-xl">
+                            <span class="text-xs font-bold uppercase tracking-wider text-teal-700 block mb-1">Passaggio 4</span>
+                            <span class="font-bold text-slate-800 block">Infiltrazione & Accumulo</span>
+                            <p class="text-xs text-slate-600 mt-1">L'acqua penetra nel terreno alimentando falde acquifere, fiumi e ritornando infine al mare.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prerequisiti Indispensabili -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-6 sm:p-8 bg-gradient-to-r from-emerald-50 to-teal-50 border-b border-slate-200">
+                    <div class="flex items-center space-x-3">
+                        <span class="p-2.5 bg-emerald-600 text-white rounded-xl shadow">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        </span>
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900">2. Prerequisiti Indispensabili dell'Alunno</h2>
+                            <p class="text-slate-600 text-sm">Le 4 competenze fondamentali per svolgere l'esercizio</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 sm:p-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="flex items-start space-x-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <span class="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-sm">1</span>
+                            <div>
+                                <h3 class="font-semibold text-slate-800">Comprensione del Testo Scientifico</h3>
+                                <p class="text-sm text-slate-600 mt-1">Saper leggere e comprendere un testo o schema relativo agli stati della materia (liquido, aeriforme, solido) e ai cambiamenti di stato.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <span class="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-sm">2</span>
+                            <div>
+                                <h3 class="font-semibold text-slate-800">Selezione delle Informazioni Causa-Effetto</h3>
+                                <p class="text-sm text-slate-600 mt-1">Saper isolare le fasi essenziali del ciclo idrologico distinguendo le cause primarie (calore solare) dalle conseguenze (condensazione e pioggia).</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <span class="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-sm">3</span>
+                            <div>
+                                <h3 class="font-semibold text-slate-800">Padronanza del Lessico Specifico</h3>
+                                <p class="text-sm text-slate-600 mt-1">Conoscere i termini disciplinari chiave (es. *evaporazione, condensazione, precipitazione, falda acquifera*).</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <span class="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-sm">4</span>
+                            <div>
+                                <h3 class="font-semibold text-slate-800">Comprensione dello Schema di Rete/Ciclo</h3>
+                                <p class="text-sm text-slate-600 mt-1">Comprendere che un processo ciclico non ha un inizio o una fine rigida e saper rappresentare frecce di direzione circolare.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: Obiettivi Didattici -->
+        <section id="obiettivi" class="tab-content space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Obiettivo Principale -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+                    <div class="p-6 bg-gradient-to-r from-sky-600 to-indigo-700 text-white">
+                        <div class="flex items-center space-x-3">
+                            <div class="p-2 bg-white/20 rounded-lg">
+                                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-bold">Obiettivo Principale</h2>
+                                <p class="text-xs text-sky-200">Traguardo cognitivo primario</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6 flex-grow space-y-4">
+                        <div class="p-4 bg-sky-50 border border-sky-100 rounded-xl">
+                            <h3 class="font-semibold text-sky-900 mb-1 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-sky-600"></span>
+                                Organizzazione Concettuale del Fenomeno Naturale
+                            </h3>
+                            <p class="text-sm text-slate-700">Sviluppare la capacità di schematizzare in modo coerente e circolare le trasformazioni fisiche e gli spostamenti dell'acqua sulla Terra.</p>
+                        </div>
+                        <div class="p-4 bg-sky-50 border border-sky-100 rounded-xl">
+                            <h3 class="font-semibold text-sky-900 mb-1 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-sky-600"></span>
+                                Assimilazione del Lessico Scientifico
+                            </h3>
+                            <p class="text-sm text-slate-700">Apprendere ed applicare correttamente la terminologia scientifica relativa agli stati fisici dell'acqua e ai processi idrologici.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Obiettivi Secondari -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+                    <div class="p-6 bg-gradient-to-r from-teal-600 to-emerald-700 text-white">
+                        <div class="flex items-center space-x-3">
+                            <div class="p-2 bg-white/20 rounded-lg">
+                                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-bold">Obiettivi Secondari</h2>
+                                <p class="text-xs text-teal-200">Processi metacognitivi e strategici</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6 flex-grow space-y-4">
+                        <div class="p-4 bg-teal-50 border border-teal-100 rounded-xl">
+                            <h3 class="font-semibold text-teal-900 mb-1 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-teal-600"></span>
+                                Pianificazione Spaziale della Mappa
+                            </h3>
+                            <p class="text-sm text-slate-700">Pianificare la disposizione visiva dei nodi nel foglio (es. Sole in alto, Oceano in basso, frecce di risalita e ricaduta).</p>
+                        </div>
+                        <div class="p-4 bg-teal-50 border border-teal-100 rounded-xl">
+                            <h3 class="font-semibold text-teal-900 mb-1 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-teal-600"></span>
+                                Autoregolazione Metacognitiva
+                            </h3>
+                            <p class="text-sm text-slate-700">Riconoscere eventuali omissioni nel ciclo (es. "Dove va l'acqua dopo che è piovuta?") verificando autonomamente la completezza del ciclo.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: Calibrazione Difficoltà -->
+        <section id="difficolta" class="tab-content space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                <div class="mb-6">
+                    <h2 class="text-xl font-bold text-slate-900">Progressione di Difficoltà per il Ciclo dell'Acqua</h2>
+                    <p class="text-slate-600 text-sm">Gradualità pedagogica: da guida completa ad autonomia totale</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Facile -->
+                    <div class="border border-emerald-200 bg-emerald-50/40 rounded-2xl p-6 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full uppercase">Facile</span>
+                                <span class="text-emerald-700 text-xs font-bold">Livello 1</span>
+                            </div>
+                            <h3 class="font-bold text-slate-800 text-lg mb-2">Mappa Guidata con Completamento</h3>
+                            <p class="text-sm text-slate-600 leading-relaxed">
+                                Lo schema grafico del paesaggio e i collegamenti principali sono già presenti. L'alunno inserisce solo 3-4 termini mancanti scelti da un elenco fornitogli.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-emerald-200">
+                            <span class="text-xs font-semibold text-emerald-900">Supporto:</span>
+                            <p class="text-xs text-slate-600">Nodi fissi + lista di parole predefinite.</p>
+                        </div>
+                    </div>
+
+                    <!-- Intermedio -->
+                    <div class="border border-amber-200 bg-amber-50/40 rounded-2xl p-6 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-full uppercase">Intermedio</span>
+                                <span class="text-amber-700 text-xs font-bold">Livello 2</span>
+                            </div>
+                            <h3 class="font-bold text-slate-800 text-lg mb-2">Mappa a Tasselli (Nodi da ordinare)</h3>
+                            <p class="text-sm text-slate-600 leading-relaxed">
+                                Vengono forniti tutti i nodi e le etichette ("Evaporazione", "Condensazione", "Precipitazione", ecc.) fuori posto. L'alunno deve posizionarli e collegarli correttamente nello schema.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-amber-200">
+                            <span class="text-xs font-semibold text-amber-900">Supporto:</span>
+                            <p class="text-xs text-slate-600">Concetti già dati, layout da costruire.</p>
+                        </div>
+                    </div>
+
+                    <!-- Difficile -->
+                    <div class="border border-rose-200 bg-rose-50/40 rounded-2xl p-6 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-3 py-1 bg-rose-100 text-rose-800 text-xs font-bold rounded-full uppercase">Complesso</span>
+                                <span class="text-rose-700 text-xs font-bold">Livello 3</span>
+                            </div>
+                            <h3 class="font-bold text-slate-800 text-lg mb-2">Mappa da Zero (Partendo da Testo)</h3>
+                            <p class="text-sm text-slate-600 leading-relaxed">
+                                Partendo da un testo narrativo-scientifico sul percorso di una goccia d'acqua, l'alunno individua autonomamente i concetti, sceglie i nodi, definisce la disposizione e disegna le frecce con le relative etichette.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-rose-200">
+                            <span class="text-xs font-semibold text-rose-900">Supporto:</span>
+                            <p class="text-xs text-slate-600">Nessun supporto grafico predefinito.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: Varianti & BES -->
+        <section id="tipologie" class="tab-content space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                <div class="mb-6">
+                    <h2 class="text-xl font-bold text-slate-900">Varianti dell'Esercizio & Inclusione (BES/DSA)</h2>
+                    <p class="text-slate-600 text-sm">Adattamenti formativi e modalità multimediali</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-gradient-to-b from-purple-50 to-white p-6 rounded-2xl border border-purple-100 shadow-sm">
+                        <div class="w-12 h-12 bg-purple-600 text-white rounded-xl flex items-center justify-center mb-4 shadow">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-lg mb-2">Mappa Visiva & Iconica (BES/DSA)</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                            Sostituzione o affiancamento del testo scritto con illustrazioni chiari del Sole, nuvole, pioggia, fiumi e mare. Codici colore differenziati per lo stato fisico dell'acqua.
+                        </p>
+                        <span class="inline-block px-3 py-1 bg-purple-100 text-purple-800 text-xs font-semibold rounded-md">Massima Inclusività</span>
+                    </div>
+
+                    <div class="bg-gradient-to-b from-blue-50 to-white p-6 rounded-2xl border border-blue-100 shadow-sm">
+                        <div class="w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center mb-4 shadow">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-lg mb-2">Lavoro Cooperativo (Cooperative Learning)</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                            Ogni studente del gruppo si occupa di approfondire e rappresentare una specifica fase (es. un esperto dell'evaporazione, un esperto delle nubi) integrando poi le parti in un'unica mappa di gruppo.
+                        </p>
+                        <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-md">Apprendimento Sociale</span>
+                    </div>
+
+                    <div class="bg-gradient-to-b from-teal-50 to-white p-6 rounded-2xl border border-teal-100 shadow-sm">
+                        <div class="w-12 h-12 bg-teal-600 text-white rounded-xl flex items-center justify-center mb-4 shadow">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-lg mb-2">Mappatura Digitale Interattiva</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                            Utilizzo di un canvas digitale drag-and-drop. Permette il riposizionamento dei nodi in tempo reale, la modifica immediata delle connessioni e la sperimentazione senza paura di commettere errori irreversibili.
+                        </p>
+                        <span class="inline-block px-3 py-1 bg-teal-100 text-teal-800 text-xs font-semibold rounded-md">Feedback Immediato</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: Simulatore Interattivo Canvas -->
+        <section id="simulatore" class="tab-content space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-4 sm:p-6 bg-slate-900 text-white flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-lg font-bold flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-cyan-400"></span>
+                            Simulatore Mappa: Il Ciclo dell'Acqua
+                        </h2>
+                        <p class="text-xs text-slate-400">Trascina i nodi con il mouse o con il touch per organizzare il ciclo idrologico</p>
+                    </div>
+
+                    <!-- Controlli del Simulatore -->
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button onclick="loadWaterPreset('facile')" class="px-3 py-1.5 bg-emerald-800/80 hover:bg-emerald-700 text-emerald-200 border border-emerald-600 rounded-lg text-xs font-semibold transition">
+                            Preset Facile (Guidato)
+                        </button>
+                        <button onclick="loadWaterPreset('intermedio')" class="px-3 py-1.5 bg-amber-800/80 hover:bg-amber-700 text-amber-200 border border-amber-600 rounded-lg text-xs font-semibold transition">
+                            Preset Intermedio
+                        </button>
+                        <button onclick="loadWaterPreset('completo')" class="px-3 py-1.5 bg-sky-800/80 hover:bg-sky-700 text-sky-200 border border-sky-600 rounded-lg text-xs font-semibold transition">
+                            Ciclo Completo
+                        </button>
+                        <button onclick="addCustomNode()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold transition flex items-center gap-1">
+                            + Aggiungi Nodo
+                        </button>
+                        <button onclick="resetCanvasMap()" class="px-3 py-1.5 bg-rose-900/60 hover:bg-rose-800 text-rose-200 rounded-lg text-xs font-semibold transition">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Canvas Wrapper -->
+                <div class="relative w-full h-[520px] bg-slate-950 overflow-hidden">
+                    <canvas id="waterCanvas" class="w-full h-full block cursor-grab active:cursor-grabbing"></canvas>
+                    <div class="absolute bottom-3 right-3 bg-slate-900/90 text-slate-300 text-xs px-3 py-2 rounded-lg border border-slate-700 backdrop-blur pointer-events-none">
+                        💧 Tip: Trascina liberamente le bolle concettuali per costruire il ciclo
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
+            Modulo Didattico Interattivo • Costruzione di una Mappa Cognitiva sul Ciclo dell'Acqua
+        </div>
+    </footer>
+
+    <!-- Logic Script -->
+    <script>
+        // Gestione Tab
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            const targetContent = document.getElementById(tabId);
+            const targetBtn = document.getElementById('tab-' + tabId);
+
+            if (targetContent) targetContent.classList.add('active');
+            if (targetBtn) targetBtn.classList.add('active');
+
+            if (tabId === 'simulatore') {
+                setTimeout(resizeCanvas, 50);
+            }
+        }
+
+        // --- CANVAS INTERATTIVO DEL CICLO DELL'ACQUA ---
+        const canvas = document.getElementById('waterCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let nodes = [];
+        let links = [];
+        let draggedNode = null;
+        let dragOffsetX = 0;
+        let dragOffsetY = 0;
+
+        function resizeCanvas() {
+            if (!canvas) return;
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            drawMap();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        function loadWaterPreset(type) {
+            const w = canvas.width || 800;
+            const h = canvas.height || 500;
+
+            if (type === 'facile') {
+                nodes = [
+                    { id: 1, text: "☀️ SOLE (Calore)", x: w * 0.2, y: h * 0.2, color: "#eab308" },
+                    { id: 2, text: "💨 EVAPORAZIONE", x: w * 0.5, y: h * 0.3, color: "#06b6d4" },
+                    { id: 3, text: "☁️ NUBI / CONDENSAZIONE", x: w * 0.8, y: h * 0.2, color: "#64748b" },
+                    { id: 4, text: "🌧️ PIOGGIA / PRECIPITAZIONE", x: w * 0.7, y: h * 0.7, color: "#2563eb" },
+                    { id: 5, text: "🌊 MARE / OCEANO", x: w * 0.3, y: h * 0.75, color: "#0284c7" }
+                ];
+                links = [
+                    { from: 1, to: 2, label: "riscalda" },
+                    { from: 2, to: 3, label: "sale e forma" },
+                    { from: 3, to: 4, label: "ricade come" },
+                    { from: 4, to: 5, label: "scorre verso" },
+                    { from: 5, to: 2, label: "evapora da" }
+                ];
+            } else if (type === 'intermedio') {
+                nodes = [
+                    { id: 1, text: "☀️ Energia Solare", x: w * 0.18, y: h * 0.18, color: "#eab308" },
+                    { id: 2, text: "💨 Evaporazione", x: w * 0.45, y: h * 0.25, color: "#06b6d4" },
+                    { id: 3, text: "☁️ Condensazione", x: w * 0.8, y: h * 0.25, color: "#64748b" },
+                    { id: 4, text: "🌧️ Precipitazione", x: w * 0.8, y: h * 0.7, color: "#2563eb" },
+                    { id: 5, text: "🏞️ Infiltrazione (Falda)", x: w * 0.5, y: h * 0.82, color: "#059669" },
+                    { id: 6, text: "🌊 Oceani e Fiumi", x: w * 0.2, y: h * 0.7, color: "#0284c7" }
+                ];
+                links = [
+                    { from: 1, to: 2, label: "avvia" },
+                    { from: 2, to: 3, label: "trasforma in" },
+                    { from: 3, to: 4, label: "genera" },
+                    { from: 4, to: 5, label: "penetra in" },
+                    { from: 5, to: 6, label: "confluisce in" },
+                    { from: 6, to: 2, label: "alimenta" }
+                ];
+            } else if (type === 'completo') {
+                nodes = [
+                    { id: 1, text: "☀️ Sole", x: w * 0.15, y: h * 0.15, color: "#eab308" },
+                    { id: 2, text: "🌊 Superficie Acqua", x: w * 0.2, y: h * 0.65, color: "#0284c7" },
+                    { id: 3, text: "💨 Evaporazione", x: w * 0.4, y: h * 0.2, color: "#06b6d4" },
+                    { id: 4, text: "🌿 Traspirazione Piante", x: w * 0.4, y: h * 0.45, color: "#16a34a" },
+                    { id: 5, text: "☁️ Condensazione Nubi", x: w * 0.75, y: h * 0.2, color: "#475569" },
+                    { id: 6, text: "🌧️ Precipitazioni", x: w * 0.8, y: h * 0.6, color: "#2563eb" },
+                    { id: 7, text: "⛰️ Scorrimento Superficiale", x: w * 0.55, y: h * 0.75, color: "#d97706" },
+                    { id: 8, text: "💧 Falda Acquifera", x: w * 0.35, y: h * 0.85, color: "#0d9488" }
+                ];
+                links = [
+                    { from: 1, to: 3, label: "scalda" },
+                    { from: 1, to: 4, label: "stimola" },
+                    { from: 2, to: 3, label: "fornisce acqua" },
+                    { from: 3, to: 5, label: "sale in" },
+                    { from: 4, to: 5, label: "rilascia vapore" },
+                    { from: 5, to: 6, label: "produce" },
+                    { from: 6, to: 7, label: "alimenta" },
+                    { from: 6, to: 8, label: "percola in" },
+                    { from: 7, to: 2, label: "ritorna al" },
+                    { from: 8, to: 2, label: "sfocia nel" }
+                ];
+            }
+            drawMap();
+        }
+
+        function drawMap() {
+            if (!ctx) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Sfondo personalizzato con griglia idrologica
+            ctx.fillStyle = "#090d16";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Linee guida griglia soffusa
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.05)";
+            ctx.lineWidth = 1;
+            for (let x = 0; x < canvas.width; x += 40) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            for (let y = 0; y < canvas.height; y += 40) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+
+            // Disegna Collegamenti Frecce
+            links.forEach(link => {
+                const start = nodes.find(n => n.id === link.from);
+                const end = nodes.find(n => n.id === link.to);
+                if (start && end) {
+                    drawArrow(start.x, start.y, end.x, end.y, link.label);
+                }
+            });
+
+            // Disegna Nodi Concettuali
+            nodes.forEach(node => {
+                ctx.font = "600 13px Inter, sans-serif";
+                const textWidth = ctx.measureText(node.text).width;
+                const rectW = Math.max(textWidth + 28, 130);
+                const rectH = 42;
+                const rx = node.x - rectW / 2;
+                const ry = node.y - rectH / 2;
+
+                // Ombra
+                ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
+                ctx.shadowBlur = 12;
+                ctx.shadowOffsetY = 4;
+
+                // Sfondo del nodo
+                ctx.fillStyle = node.color || "#0284c7";
+                ctx.beginPath();
+                ctx.roundRect(rx, ry, rectW, rectH, 10);
+                ctx.fill();
+
+                ctx.shadowColor = "transparent";
+
+                // Bordo
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.4)";
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                // Testo del nodo
+                ctx.fillStyle = "#ffffff";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(node.text, node.x, node.y);
+            });
+        }
+
+        function drawArrow(fromx, fromy, tox, toy, label) {
+            const headlen = 10;
+            const dx = tox - fromx;
+            const dy = toy - fromy;
+            const angle = Math.atan2(dy, dx);
+            const dist = Math.hypot(dx, dy);
+
+            if (dist < 60) return;
+
+            const startX = fromx + 35 * Math.cos(angle);
+            const startY = fromy + 35 * Math.sin(angle);
+            const endX = tox - 45 * Math.cos(angle);
+            const endY = toy - 45 * Math.sin(angle);
+
+            // Linea
+            ctx.strokeStyle = "#38bdf8";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(endX, endY);
+            ctx.stroke();
+
+            // Punta freccia
+            ctx.fillStyle = "#38bdf8";
+            ctx.beginPath();
+            ctx.moveTo(endX, endY);
+            ctx.lineTo(endX - headlen * Math.cos(angle - Math.PI / 6), endY - headlen * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(endX - headlen * Math.cos(angle + Math.PI / 6), endY - headlen * Math.sin(angle + Math.PI / 6));
+            ctx.fill();
+
+            // Etichetta verbale
+            if (label) {
+                const midX = (startX + endX) / 2;
+                const midY = (startY + endY) / 2;
+
+                ctx.font = "11px Inter, sans-serif";
+                const labelW = ctx.measureText(label).width + 12;
+
+                ctx.fillStyle = "#0f172a";
+                ctx.beginPath();
+                ctx.roundRect(midX - labelW / 2, midY - 10, labelW, 20, 5);
+                ctx.fill();
+                ctx.strokeStyle = "#38bdf8";
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                ctx.fillStyle = "#e0f2fe";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(label, midX, midY);
+            }
+        }
+
+        // Interazione Pointer/Touch
+        function getCoords(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+
+        function onPointerDown(e) {
+            const pos = getCoords(e);
+            for (let i = nodes.length - 1; i >= 0; i--) {
+                const n = nodes[i];
+                if (Math.hypot(n.x - pos.x, n.y - pos.y) < 45) {
+                    draggedNode = n;
+                    dragOffsetX = pos.x - n.x;
+                    dragOffsetY = pos.y - n.y;
+                    break;
+                }
+            }
+        }
+
+        function onPointerMove(e) {
+            if (draggedNode) {
+                const pos = getCoords(e);
+                draggedNode.x = pos.x - dragOffsetX;
+                draggedNode.y = pos.y - dragOffsetY;
+                drawMap();
+            }
+        }
+
+        function onPointerUp() {
+            draggedNode = null;
+        }
+
+        canvas.addEventListener('mousedown', onPointerDown);
+        canvas.addEventListener('mousemove', onPointerMove);
+        window.addEventListener('mouseup', onPointerUp);
+
+        canvas.addEventListener('touchstart', onPointerDown, { passive: true });
+        canvas.addEventListener('touchmove', onPointerMove, { passive: true });
+        window.addEventListener('touchend', onPointerUp);
+
+        function addCustomNode() {
+            const name = prompt("Inserisci il nome del nuovo elemento o fase del ciclo dell'acqua:", "💧 Nuovo Processo");
+            if (name) {
+                const newNode = {
+                    id: Date.now(),
+                    text: name,
+                    x: canvas.width / 2 + (Math.random() * 60 - 30),
+                    y: canvas.height / 2 + (Math.random() * 60 - 30),
+                    color: "#0d9488"
+                };
+                nodes.push(newNode);
+                if (nodes.length > 1) {
+                    links.push({
+                        from: nodes[nodes.length - 2].id,
+                        to: newNode.id,
+                        label: "collegato a"
+                    });
+                }
+                drawMap();
+            }
+        }
+
+        function resetCanvasMap() {
+            nodes = [];
+            links = [];
+            drawMap();
+        }
+
+        // Avvio automatico al caricamento
+        window.onload = function() {
+            resizeCanvas();
+            loadWaterPreset('intermedio');
+        };
+    </script>
+</body>
+</html>
